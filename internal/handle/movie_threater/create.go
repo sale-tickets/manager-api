@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/sale-tickets/manager-api/internal/common/utils"
 	"github.com/sale-tickets/manager-api/internal/view"
 
 	manager_api "github.com/sale-tickets/golang-common/manager-api/proto"
@@ -12,7 +13,10 @@ import (
 )
 
 func (c *movieTheaterController) Create(ctx context.Context, req *manager_api.CreateMovieTheaterReq) (*manager_api.CreateMovieTheaterRes, error) {
-	reqData := view.CreateMovieTheaterReq{CreateMovieTheaterReq: req}
+	reqData := view.CreateMovieTheaterReq{
+		CreaterId:             utils.GetProfileId(ctx),
+		CreateMovieTheaterReq: req,
+	}
 	if err := reqData.Validate(); err != nil {
 		return nil, err
 	}

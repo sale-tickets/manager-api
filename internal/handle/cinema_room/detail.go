@@ -4,11 +4,15 @@ import (
 	"context"
 
 	manager_api "github.com/sale-tickets/golang-common/manager-api/proto"
+	"github.com/sale-tickets/manager-api/internal/common/utils"
 	"github.com/sale-tickets/manager-api/internal/view"
 )
 
 func (c *cinemaRoomController) Detail(ctx context.Context, req *manager_api.DetailCinemaRoomReq) (*manager_api.DetailCinemaRoomRes, error) {
-	reqData := &view.DetailCinemaRoomReq{DetailCinemaRoomReq: req}
+	reqData := &view.DetailCinemaRoomReq{
+		CreaterId:           utils.GetProfileId(ctx),
+		DetailCinemaRoomReq: req,
+	}
 	if err := reqData.Validate(); err != nil {
 		return nil, err
 	}

@@ -11,18 +11,24 @@ func (r *cinemaRoomRepo) CountList(req *view.ListCinemaRoomReq) (int32, error) {
 	var count int32
 
 	queryStr := fmt.Sprintf(`
-			SELECT count(uuid)
-			FROM cinema_rooms
-			WHERE %s AND deleted_at IS NULL
+			SELECT count(cr.uuid)
+			FROM cinema_rooms AS cr
+			JOIN movie_theaters AS mt ON mt.uuid = cr.movie_theater_id
+			WHERE 
+				%s 
+				AND mt.creater_id = ?
+				AND cr.deleted_at IS NULL
+				AND mt.deleted_at IS NULL
 		`,
 		utils.MergeConditionAND(
-			utils.AddLikeClause("code"),
+			utils.AddLikeClause("cr.code"),
 		),
 	)
 
 	err := r.db.Raw(
 		queryStr,
 		utils.AddLikeValue(req.Filter.Code),
+		req.CreateId,
 	).Scan(&count).Error
 	if err != nil {
 		return 0, err

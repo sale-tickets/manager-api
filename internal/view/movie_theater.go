@@ -24,6 +24,7 @@ func (v *CreateMovieTheaterReq) Validate() error {
 }
 
 type GetListMovieTheaterReq struct {
+	CreaterId string
 	*manager_api.GetListMovieTheaterReq
 }
 
@@ -48,10 +49,12 @@ func (v *GetListMovieTheaterReq) Validate() error {
 }
 
 type DetailMovieTheaterReq struct {
+	CreaterId string
 	*manager_api.DetailMovieTheaterReq
 }
 
 type UpdateMovieTheaterReq struct {
+	CreaterId string
 	*manager_api.UpdateMovieTheaterReq
 }
 

@@ -12,7 +12,10 @@ func (r *movietheaterRepo) CountList(req view.GetListMovieTheaterReq) (int32, er
 	queryStr := fmt.Sprintf(`
 		SELECT count(uuid)
 		FROM movie_theaters
-		WHERE %s
+		WHERE 
+			%s 
+			AND creater_id = ?
+			AND deleted_at IS NULL
 		`,
 		utils.MergeConditionAND(
 			utils.AddLikeClause("name"),
@@ -21,6 +24,7 @@ func (r *movietheaterRepo) CountList(req view.GetListMovieTheaterReq) (int32, er
 	)
 	err := r.db.Raw(
 		queryStr,
+		req.CreaterId,
 		utils.AddLikeValue(req.Filter.Name),
 		utils.AddLikeValue(req.Filter.Address),
 	).Scan(&count).Error

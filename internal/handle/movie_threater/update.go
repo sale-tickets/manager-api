@@ -3,13 +3,17 @@ package moviethreater_controller
 import (
 	"context"
 
+	"github.com/sale-tickets/manager-api/internal/common/utils"
 	"github.com/sale-tickets/manager-api/internal/view"
 
 	manager_api "github.com/sale-tickets/golang-common/manager-api/proto"
 )
 
 func (c *movieTheaterController) Update(ctx context.Context, req *manager_api.UpdateMovieTheaterReq) (*manager_api.UpdateMovieTheaterRes, error) {
-	reqData := view.UpdateMovieTheaterReq{UpdateMovieTheaterReq: req}
+	reqData := view.UpdateMovieTheaterReq{
+		CreaterId:             utils.GetProfileId(ctx),
+		UpdateMovieTheaterReq: req,
+	}
 	if err := reqData.Validate(); err != nil {
 		return nil, err
 	}

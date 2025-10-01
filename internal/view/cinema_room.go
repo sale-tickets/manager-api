@@ -7,6 +7,7 @@ import (
 )
 
 type CreateCinemaRoomReq struct {
+	CreaterId string
 	*manager_api.CreateCinemaRoomReq
 }
 
@@ -24,6 +25,7 @@ func (v *CreateCinemaRoomReq) Validate() error {
 }
 
 type UpdateCinemaRoomReq struct {
+	CreaterId string
 	*manager_api.UpdateCinemaRoomReq
 }
 
@@ -59,6 +61,7 @@ func (v *ListCinemaRoomReq) Validate() error {
 }
 
 type DetailCinemaRoomReq struct {
+	CreaterId string
 	*manager_api.DetailCinemaRoomReq
 }
 

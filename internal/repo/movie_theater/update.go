@@ -13,7 +13,10 @@ func (r *movietheaterRepo) Update(req view.UpdateMovieTheaterReq) error {
 			name = ?,
 			address = ?,
 			updated_at = ?
-		WHERE uuid = ? AND deleted_at IS NULL
+		WHERE 
+			uuid = ? 
+			AND creater_id = ?
+			AND deleted_at IS NULL
 	`
 
 	err := r.db.Exec(
@@ -22,6 +25,7 @@ func (r *movietheaterRepo) Update(req view.UpdateMovieTheaterReq) error {
 		req.Address,
 		time.Now(),
 		req.Uuid,
+		req.CreaterId,
 	).Error
 	if err != nil {
 		return err

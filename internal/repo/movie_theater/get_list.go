@@ -20,6 +20,7 @@ func (r *movietheaterRepo) GetList(req view.GetListMovieTheaterReq) ([]model.Mov
 		FROM movie_theaters
 		WHERE
 			%s
+			AND creater_id = ?
 			AND deleted_at IS NULL
 		LIMIT ?
 		OFFSET ?
@@ -34,6 +35,7 @@ func (r *movietheaterRepo) GetList(req view.GetListMovieTheaterReq) ([]model.Mov
 		queryStr,
 		utils.AddLikeValue(req.Filter.Name),
 		utils.AddLikeValue(req.Filter.Address),
+		req.CreaterId,
 		req.FilterBase.Limit,
 		req.FilterBase.Offset,
 	).Scan(&results).Error
