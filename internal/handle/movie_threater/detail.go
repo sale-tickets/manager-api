@@ -5,7 +5,7 @@ import (
 
 	"github.com/sale-tickets/manager-api/internal/view"
 
-	manager_api "github.com/duyhung2k4/sale-tickets-golang-common/manager-api/proto"
+	manager_api "github.com/sale-tickets/golang-common/manager-api/proto"
 )
 
 func (c *movieTheaterController) Detail(ctx context.Context, req *manager_api.DetailMovieTheaterReq) (*manager_api.DetailMovieTheaterRes, error) {

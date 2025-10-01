@@ -3,7 +3,7 @@ package view
 import (
 	"errors"
 
-	manager_api "github.com/duyhung2k4/sale-tickets-golang-common/manager-api/proto"
+	manager_api "github.com/sale-tickets/golang-common/manager-api/proto"
 )
 
 type CreateCinemaRoomReq struct {

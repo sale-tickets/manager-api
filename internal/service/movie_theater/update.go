@@ -3,7 +3,7 @@ package movietheater_service
 import (
 	"github.com/sale-tickets/manager-api/internal/view"
 
-	manager_api "github.com/duyhung2k4/sale-tickets-golang-common/manager-api/proto"
+	manager_api "github.com/sale-tickets/golang-common/manager-api/proto"
 )
 
 func (s *movieTheaterService) Update(req view.UpdateMovieTheaterReq) (*manager_api.UpdateMovieTheaterRes, error) {

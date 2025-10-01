@@ -3,7 +3,7 @@ package moviethreater_controller
 import (
 	movietheater_service "github.com/sale-tickets/manager-api/internal/service/movie_theater"
 
-	manager_api "github.com/duyhung2k4/sale-tickets-golang-common/manager-api/proto"
+	manager_api "github.com/sale-tickets/golang-common/manager-api/proto"
 )
 
 type movieTheaterController struct {

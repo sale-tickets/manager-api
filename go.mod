@@ -5,10 +5,10 @@ go 1.24.0
 toolchain go1.24.7
 
 require (
-	github.com/duyhung2k4/sale-tickets-golang-common v1.0.2
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.2
+	github.com/sale-tickets/golang-common v1.0.1
 	github.com/spf13/viper v1.21.0
 	google.golang.org/grpc v1.75.1
 	gorm.io/driver/postgres v1.6.0
@@ -37,7 +37,7 @@ require (
 	golang.org/x/sync v0.16.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/text v0.28.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20250922171735-9219d122eba9 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250908214217-97024824d090 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20250929231259-57b25ae835d4 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250922171735-9219d122eba9 // indirect
 	google.golang.org/protobuf v1.36.9 // indirect
 )
