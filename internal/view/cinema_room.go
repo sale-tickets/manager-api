@@ -41,6 +41,7 @@ func (v *UpdateCinemaRoomReq) Validate() error {
 }
 
 type ListCinemaRoomReq struct {
+	CreateId string
 	*manager_api.ListCinemaRoomReq
 }
 
@@ -53,9 +54,6 @@ func (v *ListCinemaRoomReq) Validate() error {
 	}
 	if v.Filter == nil {
 		return errors.New("filter invalid")
-	}
-	if v.Filter.Code == "" {
-		return errors.New("code invalid")
 	}
 	return nil
 }

@@ -2,6 +2,7 @@ package cinemaroom_repo
 
 import (
 	"github.com/sale-tickets/manager-api/internal/common/connection"
+	"github.com/sale-tickets/manager-api/internal/model"
 	"github.com/sale-tickets/manager-api/internal/view"
 
 	"gorm.io/gorm"
@@ -12,7 +13,11 @@ type (
 		db *gorm.DB
 	}
 	CinemaRoomRepo interface {
-		Create(req *view.CreateCinemaRoomReq) (uuid string, err error)
+		Create(req *view.CreateCinemaRoomReq) (id string, err error)
+		Update(req *view.UpdateCinemaRoomReq) error
+		List(req *view.ListCinemaRoomReq) ([]*model.CinemaRoom, error)
+		CountList(req *view.ListCinemaRoomReq) (int32, error)
+		Detail(req *view.DetailCinemaRoomReq) (*model.CinemaRoom, error)
 	}
 )
 

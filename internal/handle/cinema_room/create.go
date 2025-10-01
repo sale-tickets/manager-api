@@ -9,9 +9,20 @@ import (
 )
 
 func (c *cinemaRoomController) Create(ctx context.Context, req *manager_api.CreateCinemaRoomReq) (*manager_api.CreateCinemaRoomRes, error) {
-	reqDate := view.CreateCinemaRoomReq{CreateCinemaRoomReq: req}
+	reqDate := &view.CreateCinemaRoomReq{CreateCinemaRoomReq: req}
 	if err := reqDate.Validate(); err != nil {
 		return nil, err
 	}
-	return nil, nil
+
+	uuid, err := c.service.Create(reqDate)
+	if err != nil {
+		return nil, err
+	}
+
+	result := &manager_api.CreateCinemaRoomRes{
+		Uuid:           uuid,
+		Code:           req.Code,
+		MovieTheaterId: req.MovieTheaterId,
+	}
+	return result, nil
 }

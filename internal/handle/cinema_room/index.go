@@ -1,11 +1,17 @@
 package cinemaroom_controller
 
-import manager_api "github.com/sale-tickets/golang-common/manager-api/proto"
+import (
+	manager_api "github.com/sale-tickets/golang-common/manager-api/proto"
+	cinemaroom_service "github.com/sale-tickets/manager-api/internal/service/cinema_room"
+)
 
 type cinemaRoomController struct {
+	service cinemaroom_service.CinemaRoomService
 	manager_api.UnimplementedCinemaRoomServiceServer
 }
 
 func NewHandle() manager_api.CinemaRoomServiceServer {
-	return &cinemaRoomController{}
+	return &cinemaRoomController{
+		service: cinemaroom_service.NewCinemaRoomServic(),
+	}
 }
