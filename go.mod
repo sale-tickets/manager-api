@@ -8,7 +8,8 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.2
-	github.com/sale-tickets/golang-common v1.0.1
+	github.com/lib/pq v1.10.9
+	github.com/sale-tickets/golang-common v1.0.6
 	github.com/spf13/viper v1.21.0
 	google.golang.org/grpc v1.75.1
 	gorm.io/driver/postgres v1.6.0

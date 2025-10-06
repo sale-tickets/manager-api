@@ -12,6 +12,7 @@ import (
 	cinemaroom_controller "github.com/sale-tickets/manager-api/internal/handle/cinema_room"
 	health_controller "github.com/sale-tickets/manager-api/internal/handle/health"
 	moviethreater_controller "github.com/sale-tickets/manager-api/internal/handle/movie_threater"
+	theaterseating_controller "github.com/sale-tickets/manager-api/internal/handle/theater_seating"
 
 	"google.golang.org/grpc"
 )
@@ -32,6 +33,7 @@ func GrpcServer(startedGrpc chan<- bool, errStartGrpcServer chan<- error) {
 	manager_api.RegisterHealthServer(s, health_controller.NewHandle())
 	manager_api.RegisterMovieTheaterServer(s, moviethreater_controller.NewHandle())
 	manager_api.RegisterCinemaRoomServiceServer(s, cinemaroom_controller.NewHandle())
+	manager_api.RegisterTheaterSeatingServer(s, theaterseating_controller.NewHandle())
 
 	log.Printf("gRPC server running on %s", port)
 	startedGrpc <- true
