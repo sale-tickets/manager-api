@@ -9,24 +9,20 @@ import (
 	"gorm.io/gorm"
 )
 
-var (
-	db *gorm.DB
-)
-
-func (a *DatabaseConfig) connection() {
+func NewConnectionPsql(config *Config) *gorm.DB {
 	var err error
 
 	dns := fmt.Sprintf("host=%s user=%s password=%s  dbname=%s port=%s sslmode=disable ",
-		a.Host,
-		a.Username,
-		a.Password,
-		a.Name,
-		a.Port,
+		config.Database.Host,
+		config.Database.Username,
+		config.Database.Password,
+		config.Database.Name,
+		config.Database.Port,
 	)
-	db, err = gorm.Open(postgres.Open(dns), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
 	if err != nil {
 		fmt.Println("error connection database: ", err.Error())
-		return
+		return nil
 	}
 
 	err = db.AutoMigrate(
@@ -36,12 +32,9 @@ func (a *DatabaseConfig) connection() {
 	)
 	if err != nil {
 		fmt.Println("error migrate database: ", err.Error())
-		return
+		return nil
 	}
 
 	fmt.Println("conection database successfully!")
-}
-
-func (a *DatabaseConfig) GetConection() *gorm.DB {
 	return db
 }

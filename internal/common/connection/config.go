@@ -27,22 +27,21 @@ type DatabaseConfig struct {
 	Name     string `mapstructure:"name"`
 }
 
-var (
-	ConfigInfo *Config = &Config{}
-)
-
-func (s *Config) loadConfig() {
+func NewConfig() *Config {
+	s := &Config{}
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("config")
 
 	if err := viper.ReadInConfig(); err != nil {
 		fmt.Println("error load config: ", err.Error())
-		return
+		return nil
 	}
 
 	if err := viper.Unmarshal(&s); err != nil {
 		fmt.Println("error map config to struct: ", err.Error())
-		return
+		return nil
 	}
+
+	return s
 }

@@ -1,7 +1,6 @@
 package theaterseating_repo
 
 import (
-	"github.com/sale-tickets/manager-api/internal/common/connection"
 	"github.com/sale-tickets/manager-api/internal/model"
 	"github.com/sale-tickets/manager-api/internal/view"
 	"gorm.io/gorm"
@@ -18,8 +17,8 @@ type (
 	}
 )
 
-func NewTheaterSeatingRepo() TheaterSeatingRepo {
+func NewTheaterSeatingRepo(db *gorm.DB) TheaterSeatingRepo {
 	return &theaterSeatingRepo{
-		db: connection.ConfigInfo.Database.GetConection(),
+		db: db,
 	}
 }

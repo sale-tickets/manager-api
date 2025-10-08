@@ -1,29 +1,107 @@
 package main
 
 import (
-	"fmt"
-
+	manager_api "github.com/sale-tickets/golang-common/manager-api/proto"
 	"github.com/sale-tickets/manager-api/internal/common/connection"
+	cinemaroom_controller "github.com/sale-tickets/manager-api/internal/handle/cinema_room"
+	health_controller "github.com/sale-tickets/manager-api/internal/handle/health"
+	moviethreater_controller "github.com/sale-tickets/manager-api/internal/handle/movie_threater"
+	theaterseating_controller "github.com/sale-tickets/manager-api/internal/handle/theater_seating"
+	cinemaroom_repo "github.com/sale-tickets/manager-api/internal/repo/cinema_room"
+	movietheater_repo "github.com/sale-tickets/manager-api/internal/repo/movie_theater"
+	theaterseating_repo "github.com/sale-tickets/manager-api/internal/repo/theater_seating"
 	"github.com/sale-tickets/manager-api/internal/router"
+	cinemaroom_service "github.com/sale-tickets/manager-api/internal/service/cinema_room"
+	movietheater_service "github.com/sale-tickets/manager-api/internal/service/movie_theater"
+	theaterseating_service "github.com/sale-tickets/manager-api/internal/service/theater_seating"
+	"go.uber.org/fx"
+	"gorm.io/gorm"
 )
 
 func main() {
-	connection.Init()
+	run()
+}
 
-	chanStartedGrpc := make(chan bool, 1)
-	var chanError = make(chan error, 1)
+func run() {
+	componentInts := []fx.Option{}
 
-	go func() {
-		router.GrpcServer(chanStartedGrpc, chanError)
-	}()
+	componentInts = append(componentInts, fx.Module(
+		"config",
+		fx.Provide(func() *connection.Config {
+			return connection.NewConfig()
+		}),
+	))
 
-	go func() {
-		router.HttpServer(chanStartedGrpc, chanError)
-	}()
+	componentInts = append(componentInts, fx.Module(
+		"connection",
+		fx.Provide(func(config *connection.Config) *gorm.DB {
+			return connection.NewConnectionPsql(config)
+		}),
+	))
 
-	err := <-chanError
-	if err != nil {
-		fmt.Println("error run main: ", err.Error())
-		return
-	}
+	componentInts = append(componentInts, fx.Module(
+		"repo",
+		fx.Provide(func(db *gorm.DB) movietheater_repo.MovietheaterRepo {
+			return movietheater_repo.NewMovietheaterRepo(db)
+		}),
+		fx.Provide(func(db *gorm.DB) cinemaroom_repo.CinemaRoomRepo {
+			return cinemaroom_repo.NewCinemaRoomRepo(db)
+		}),
+		fx.Provide(func(db *gorm.DB) theaterseating_repo.TheaterSeatingRepo {
+			return theaterseating_repo.NewTheaterSeatingRepo(db)
+		}),
+	))
+
+	componentInts = append(componentInts, fx.Module(
+		"service",
+		fx.Provide(func(repo movietheater_repo.MovietheaterRepo) movietheater_service.MovietheaterService {
+			return movietheater_service.NewMovietheaterService(repo)
+		}),
+		fx.Provide(func(repo cinemaroom_repo.CinemaRoomRepo) cinemaroom_service.CinemaRoomService {
+			return cinemaroom_service.NewCinemaRoomServic(repo)
+		}),
+		fx.Provide(func(repo theaterseating_repo.TheaterSeatingRepo) theaterseating_service.TheaterSeatingService {
+			return theaterseating_service.NewTheaterSeatingService(repo)
+		}),
+	))
+
+	componentInts = append(componentInts, fx.Module(
+		"handle",
+		fx.Provide(func() manager_api.HealthServer {
+			return health_controller.NewHandle()
+		}),
+		fx.Provide(func(service movietheater_service.MovietheaterService) manager_api.MovieTheaterServer {
+			return moviethreater_controller.NewHandle(service)
+		}),
+		fx.Provide(func(service cinemaroom_service.CinemaRoomService) manager_api.CinemaRoomServiceServer {
+			return cinemaroom_controller.NewHandle(service)
+		}),
+		fx.Provide(func(service theaterseating_service.TheaterSeatingService) manager_api.TheaterSeatingServer {
+			return theaterseating_controller.NewHandle(service)
+		}),
+	))
+
+	componentInts = append(componentInts, fx.Module(
+		"run",
+		fx.Invoke(func(
+			config *connection.Config,
+			healthServer manager_api.HealthServer,
+			movieTheaterServer manager_api.MovieTheaterServer,
+			cinemaRoomServiceServer manager_api.CinemaRoomServiceServer,
+			theaterSeatingServer manager_api.TheaterSeatingServer,
+		) {
+			router.GrpcServer(
+				config,
+				healthServer,
+				movieTheaterServer,
+				cinemaRoomServiceServer,
+				theaterSeatingServer,
+			)
+		}),
+		fx.Invoke(func(config *connection.Config) {
+			router.HttpServer(config)
+		}),
+	))
+
+	fx.New(componentInts...).Run()
 }

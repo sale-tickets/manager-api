@@ -6,7 +6,7 @@ import (
 	manager_api "github.com/sale-tickets/golang-common/manager-api/proto"
 )
 
-func (m *managerService) Ping(ctx context.Context, req *manager_api.Request) (*manager_api.Response, error) {
+func (m *healthService) Ping(ctx context.Context, req *manager_api.Request) (*manager_api.Response, error) {
 	return &manager_api.Response{
 		Mess: "oke",
 	}, nil

@@ -16,8 +16,8 @@ type (
 	}
 )
 
-func NewTheaterSeatingService() TheaterSeatingService {
+func NewTheaterSeatingService(repo theaterseating_repo.TheaterSeatingRepo) TheaterSeatingService {
 	return &theaterSeatingService{
-		repo: theaterseating_repo.NewTheaterSeatingRepo(),
+		repo: repo,
 	}
 }

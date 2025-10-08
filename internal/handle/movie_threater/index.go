@@ -11,8 +11,8 @@ type movieTheaterController struct {
 	manager_api.UnimplementedMovieTheaterServer
 }
 
-func NewHandle() manager_api.MovieTheaterServer {
+func NewHandle(service movietheater_service.MovietheaterService) manager_api.MovieTheaterServer {
 	return &movieTheaterController{
-		movieTheaterService: movietheater_service.NewMovietheaterService(),
+		movieTheaterService: service,
 	}
 }

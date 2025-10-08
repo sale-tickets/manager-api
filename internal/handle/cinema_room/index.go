@@ -10,8 +10,8 @@ type cinemaRoomController struct {
 	manager_api.UnimplementedCinemaRoomServiceServer
 }
 
-func NewHandle() manager_api.CinemaRoomServiceServer {
+func NewHandle(service cinemaroom_service.CinemaRoomService) manager_api.CinemaRoomServiceServer {
 	return &cinemaRoomController{
-		service: cinemaroom_service.NewCinemaRoomServic(),
+		service: service,
 	}
 }

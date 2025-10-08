@@ -1,7 +1,6 @@
 package cinemaroom_repo
 
 import (
-	"github.com/sale-tickets/manager-api/internal/common/connection"
 	"github.com/sale-tickets/manager-api/internal/model"
 	"github.com/sale-tickets/manager-api/internal/view"
 
@@ -21,8 +20,8 @@ type (
 	}
 )
 
-func NewCinemaRoomRepo() CinemaRoomRepo {
+func NewCinemaRoomRepo(db *gorm.DB) CinemaRoomRepo {
 	return &cinemaRoomRepo{
-		db: connection.ConfigInfo.Database.GetConection(),
+		db: db,
 	}
 }

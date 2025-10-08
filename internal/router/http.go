@@ -14,38 +14,40 @@ import (
 	"google.golang.org/grpc"
 )
 
-func HttpServer(startedGrpc <-chan bool, errStartHttpServer chan<- error) {
-	<-startedGrpc
+type READY_HTTP struct{}
 
-	ctx := context.Background()
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
+func HttpServer(config *connection.Config) {
+	go func() {
+		ctx := context.Background()
+		ctx, cancel := context.WithCancel(ctx)
+		defer cancel()
 
-	mux := runtime.NewServeMux()
-	opts := []grpc.DialOption{
-		grpc.WithInsecure(),
-	}
+		mux := runtime.NewServeMux()
+		opts := []grpc.DialOption{
+			grpc.WithInsecure(),
+		}
 
-	grpcAddr := fmt.Sprintf(
-		"%s:%s",
-		connection.ConfigInfo.App.Host,
-		connection.ConfigInfo.App.GrpcPort,
-	)
-	manager_api.RegisterHealthHandlerFromEndpoint(ctx, mux, grpcAddr, opts)
-	manager_api.RegisterMovieTheaterHandlerFromEndpoint(ctx, mux, grpcAddr, opts)
-	manager_api.RegisterCinemaRoomServiceHandlerFromEndpoint(ctx, mux, grpcAddr, opts)
-	manager_api.RegisterTheaterSeatingHandlerFromEndpoint(ctx, mux, grpcAddr, opts)
+		grpcAddr := fmt.Sprintf(
+			"%s:%s",
+			config.App.Host,
+			config.App.GrpcPort,
+		)
+		manager_api.RegisterHealthHandlerFromEndpoint(ctx, mux, grpcAddr, opts)
+		manager_api.RegisterMovieTheaterHandlerFromEndpoint(ctx, mux, grpcAddr, opts)
+		manager_api.RegisterCinemaRoomServiceHandlerFromEndpoint(ctx, mux, grpcAddr, opts)
+		manager_api.RegisterTheaterSeatingHandlerFromEndpoint(ctx, mux, grpcAddr, opts)
 
-	httpAddr := fmt.Sprintf(
-		":%s",
-		connection.ConfigInfo.App.HttpPort,
-	)
-	log.Printf("REST gateway running on %s", httpAddr)
-	server := http.Server{
-		Addr:    httpAddr,
-		Handler: mux,
-	}
-	if err := server.ListenAndServe(); err != nil {
-		errStartHttpServer <- err
-	}
+		httpAddr := fmt.Sprintf(
+			":%s",
+			config.App.HttpPort,
+		)
+		log.Printf("REST gateway running on %s", httpAddr)
+		server := http.Server{
+			Addr:    httpAddr,
+			Handler: mux,
+		}
+		if err := server.ListenAndServe(); err != nil {
+			log.Fatalln("error start http server: ", err.Error())
+		}
+	}()
 }

@@ -9,36 +9,40 @@ import (
 
 	"github.com/sale-tickets/manager-api/internal/common/connection"
 	"github.com/sale-tickets/manager-api/internal/common/middleware"
-	cinemaroom_controller "github.com/sale-tickets/manager-api/internal/handle/cinema_room"
-	health_controller "github.com/sale-tickets/manager-api/internal/handle/health"
-	moviethreater_controller "github.com/sale-tickets/manager-api/internal/handle/movie_threater"
-	theaterseating_controller "github.com/sale-tickets/manager-api/internal/handle/theater_seating"
 
 	"google.golang.org/grpc"
 )
 
-func GrpcServer(startedGrpc chan<- bool, errStartGrpcServer chan<- error) {
-	port := fmt.Sprintf(":%s", connection.ConfigInfo.App.GrpcPort)
-	lis, err := net.Listen("tcp", port)
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
+type READY_GRPC struct{}
 
-	s := grpc.NewServer(
-		grpc.ChainUnaryInterceptor(
-			middleware.ValidateToken,
-			middleware.GetProfileId,
-		),
-	)
-	manager_api.RegisterHealthServer(s, health_controller.NewHandle())
-	manager_api.RegisterMovieTheaterServer(s, moviethreater_controller.NewHandle())
-	manager_api.RegisterCinemaRoomServiceServer(s, cinemaroom_controller.NewHandle())
-	manager_api.RegisterTheaterSeatingServer(s, theaterseating_controller.NewHandle())
+func GrpcServer(
+	config *connection.Config,
+	healthServer manager_api.HealthServer,
+	movieTheaterServer manager_api.MovieTheaterServer,
+	cinemaRoomServiceServer manager_api.CinemaRoomServiceServer,
+	theaterSeatingServer manager_api.TheaterSeatingServer,
+) {
+	go func() {
+		port := fmt.Sprintf(":%s", config.App.GrpcPort)
+		lis, err := net.Listen("tcp", port)
+		if err != nil {
+			log.Fatalf("failed to listen: %v", err)
+		}
 
-	log.Printf("gRPC server running on %s", port)
-	startedGrpc <- true
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-		errStartGrpcServer <- err
-	}
+		s := grpc.NewServer(
+			grpc.ChainUnaryInterceptor(
+				middleware.ValidateToken,
+				middleware.GetProfileId,
+			),
+		)
+		manager_api.RegisterHealthServer(s, healthServer)
+		manager_api.RegisterMovieTheaterServer(s, movieTheaterServer)
+		manager_api.RegisterCinemaRoomServiceServer(s, cinemaRoomServiceServer)
+		manager_api.RegisterTheaterSeatingServer(s, theaterSeatingServer)
+
+		log.Printf("gRPC server running on %s", port)
+		if err := s.Serve(lis); err != nil {
+			log.Fatalln("error start grpc server: ", err.Error())
+		}
+	}()
 }

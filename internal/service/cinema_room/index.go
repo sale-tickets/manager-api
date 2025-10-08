@@ -18,8 +18,8 @@ type (
 	}
 )
 
-func NewCinemaRoomServic() CinemaRoomService {
+func NewCinemaRoomServic(repo cinemaroom_repo.CinemaRoomRepo) CinemaRoomService {
 	return &cinemaRoomService{
-		repo: cinemaroom_repo.NewCinemaRoomRepo(),
+		repo: repo,
 	}
 }

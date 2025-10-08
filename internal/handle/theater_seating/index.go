@@ -10,8 +10,8 @@ type theaterSeatingController struct {
 	manager_api.UnimplementedTheaterSeatingServer
 }
 
-func NewHandle() manager_api.TheaterSeatingServer {
+func NewHandle(service theaterseating_service.TheaterSeatingService) manager_api.TheaterSeatingServer {
 	return &theaterSeatingController{
-		service: theaterseating_service.NewTheaterSeatingService(),
+		service: service,
 	}
 }
