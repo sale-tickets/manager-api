@@ -1,6 +1,9 @@
 package main
 
 import (
+	"context"
+	"fmt"
+
 	"github.com/godev-lib/golang/config"
 	"github.com/godev-lib/golang/psql"
 	manager_api "github.com/sale-tickets/golang-common/manager-api/proto"
@@ -8,6 +11,7 @@ import (
 	health_controller "github.com/sale-tickets/manager-api/internal/handle/health"
 	moviethreater_controller "github.com/sale-tickets/manager-api/internal/handle/movie_threater"
 	theaterseating_controller "github.com/sale-tickets/manager-api/internal/handle/theater_seating"
+	"github.com/sale-tickets/manager-api/internal/model"
 	cinemaroom_repo "github.com/sale-tickets/manager-api/internal/repo/cinema_room"
 	movietheater_repo "github.com/sale-tickets/manager-api/internal/repo/movie_theater"
 	theaterseating_repo "github.com/sale-tickets/manager-api/internal/repo/theater_seating"
@@ -84,6 +88,26 @@ func run() {
 
 	componentInts = append(componentInts, fx.Module(
 		"run",
+		fx.Invoke(func(lc fx.Lifecycle, db *gorm.DB) {
+			lc.Append(fx.Hook{
+				OnStart: func(ctx context.Context) error {
+					err := db.AutoMigrate(
+						&model.CinemaRoom{},
+						&model.MovieTheater{},
+						&model.TheaterSeating{},
+					)
+					if err != nil {
+						return err
+					}
+
+					fmt.Println("manager-api migrate db successfully!")
+					return nil
+				},
+				OnStop: func(ctx context.Context) error {
+					return nil
+				},
+			})
+		}),
 		fx.Invoke(func(
 			config *config.Config,
 			healthServer manager_api.HealthServer,
