@@ -6,8 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/sale-tickets/manager-api/internal/common/connection"
-
+	"github.com/godev-lib/golang/config"
 	manager_api "github.com/sale-tickets/golang-common/manager-api/proto"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -16,7 +15,7 @@ import (
 
 type READY_HTTP struct{}
 
-func HttpServer(config *connection.Config) {
+func HttpServer(config *config.Config) {
 	go func() {
 		ctx := context.Background()
 		ctx, cancel := context.WithCancel(ctx)

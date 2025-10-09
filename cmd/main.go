@@ -1,8 +1,9 @@
 package main
 
 import (
+	"github.com/godev-lib/golang/config"
+	"github.com/godev-lib/golang/psql"
 	manager_api "github.com/sale-tickets/golang-common/manager-api/proto"
-	"github.com/sale-tickets/manager-api/internal/common/connection"
 	cinemaroom_controller "github.com/sale-tickets/manager-api/internal/handle/cinema_room"
 	health_controller "github.com/sale-tickets/manager-api/internal/handle/health"
 	moviethreater_controller "github.com/sale-tickets/manager-api/internal/handle/movie_threater"
@@ -27,15 +28,15 @@ func run() {
 
 	componentInts = append(componentInts, fx.Module(
 		"config",
-		fx.Provide(func() *connection.Config {
-			return connection.NewConfig()
+		fx.Provide(func() *config.Config {
+			return config.NewConfig()
 		}),
 	))
 
 	componentInts = append(componentInts, fx.Module(
 		"connection",
-		fx.Provide(func(config *connection.Config) *gorm.DB {
-			return connection.NewConnectionPsql(config)
+		fx.Provide(func(config *config.Config) *gorm.DB {
+			return psql.NewConnectionPsql(config)
 		}),
 	))
 
@@ -84,7 +85,7 @@ func run() {
 	componentInts = append(componentInts, fx.Module(
 		"run",
 		fx.Invoke(func(
-			config *connection.Config,
+			config *config.Config,
 			healthServer manager_api.HealthServer,
 			movieTheaterServer manager_api.MovieTheaterServer,
 			cinemaRoomServiceServer manager_api.CinemaRoomServiceServer,
@@ -98,7 +99,7 @@ func run() {
 				theaterSeatingServer,
 			)
 		}),
-		fx.Invoke(func(config *connection.Config) {
+		fx.Invoke(func(config *config.Config) {
 			router.HttpServer(config)
 		}),
 	))

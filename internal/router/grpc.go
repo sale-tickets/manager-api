@@ -5,9 +5,9 @@ import (
 	"log"
 	"net"
 
+	"github.com/godev-lib/golang/config"
 	manager_api "github.com/sale-tickets/golang-common/manager-api/proto"
 
-	"github.com/sale-tickets/manager-api/internal/common/connection"
 	"github.com/sale-tickets/manager-api/internal/common/middleware"
 
 	"google.golang.org/grpc"
@@ -16,7 +16,7 @@ import (
 type READY_GRPC struct{}
 
 func GrpcServer(
-	config *connection.Config,
+	config *config.Config,
 	healthServer manager_api.HealthServer,
 	movieTheaterServer manager_api.MovieTheaterServer,
 	cinemaRoomServiceServer manager_api.CinemaRoomServiceServer,
