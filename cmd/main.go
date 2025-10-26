@@ -5,14 +5,18 @@ import (
 	"fmt"
 
 	"github.com/godev-lib/golang/config"
+	minio_custom "github.com/godev-lib/golang/minio"
 	"github.com/godev-lib/golang/psql"
+	"github.com/minio/minio-go/v7"
 	manager_api "github.com/sale-tickets/golang-common/manager-api/proto"
 	cinemaroom_controller "github.com/sale-tickets/manager-api/internal/handle/cinema_room"
 	health_controller "github.com/sale-tickets/manager-api/internal/handle/health"
+	movie_controller "github.com/sale-tickets/manager-api/internal/handle/movie"
 	moviethreater_controller "github.com/sale-tickets/manager-api/internal/handle/movie_threater"
 	theaterseating_controller "github.com/sale-tickets/manager-api/internal/handle/theater_seating"
 	"github.com/sale-tickets/manager-api/internal/model"
 	cinemaroom_repo "github.com/sale-tickets/manager-api/internal/repo/cinema_room"
+	movie_repo "github.com/sale-tickets/manager-api/internal/repo/movie"
 	movietheater_repo "github.com/sale-tickets/manager-api/internal/repo/movie_theater"
 	theaterseating_repo "github.com/sale-tickets/manager-api/internal/repo/theater_seating"
 	"github.com/sale-tickets/manager-api/internal/router"
@@ -40,9 +44,20 @@ func run() {
 	componentInts = append(componentInts, fx.Module(
 		"connection",
 		fx.Provide(func(config *config.Config) *gorm.DB {
-			return psql.NewConnectionPsql(config)
+			db := psql.NewConnectionPsql(config).Debug()
+			return db
+		}),
+		fx.Provide(func(config *config.Config) *minio.Client {
+			return minio_custom.NewMinioClient(config)
 		}),
 	))
+
+	// componentInts = append(componentInts, fx.Module(
+	// 	"orm",
+	// 	fx.Provide(func(db *gorm.DB) orm.DataMethod[model.Movie] {
+	// 		return orm.NewOrm[model.Movie](db)
+	// 	}),
+	// ))
 
 	componentInts = append(componentInts, fx.Module(
 		"repo",
@@ -54,6 +69,9 @@ func run() {
 		}),
 		fx.Provide(func(db *gorm.DB) theaterseating_repo.TheaterSeatingRepo {
 			return theaterseating_repo.NewTheaterSeatingRepo(db)
+		}),
+		fx.Provide(func(db *gorm.DB) *movie_repo.MovieRepo {
+			return movie_repo.NewMovieRepo(db)
 		}),
 	))
 
@@ -84,6 +102,9 @@ func run() {
 		fx.Provide(func(service theaterseating_service.TheaterSeatingService) manager_api.TheaterSeatingServer {
 			return theaterseating_controller.NewHandle(service)
 		}),
+		fx.Provide(func(repo *movie_repo.MovieRepo) manager_api.MovieServer {
+			return movie_controller.NewHandle(repo)
+		}),
 	))
 
 	componentInts = append(componentInts, fx.Module(
@@ -95,6 +116,7 @@ func run() {
 						&model.CinemaRoom{},
 						&model.MovieTheater{},
 						&model.TheaterSeating{},
+						&model.Movie{},
 					)
 					if err != nil {
 						return err
@@ -114,6 +136,7 @@ func run() {
 			movieTheaterServer manager_api.MovieTheaterServer,
 			cinemaRoomServiceServer manager_api.CinemaRoomServiceServer,
 			theaterSeatingServer manager_api.TheaterSeatingServer,
+			movieServer manager_api.MovieServer,
 		) {
 			router.GrpcServer(
 				config,
@@ -121,6 +144,7 @@ func run() {
 				movieTheaterServer,
 				cinemaRoomServiceServer,
 				theaterSeatingServer,
+				movieServer,
 			)
 		}),
 		fx.Invoke(func(config *config.Config) {

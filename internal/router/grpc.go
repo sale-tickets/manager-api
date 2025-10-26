@@ -21,6 +21,7 @@ func GrpcServer(
 	movieTheaterServer manager_api.MovieTheaterServer,
 	cinemaRoomServiceServer manager_api.CinemaRoomServiceServer,
 	theaterSeatingServer manager_api.TheaterSeatingServer,
+	movieServer manager_api.MovieServer,
 ) {
 	go func() {
 		port := fmt.Sprintf(":%s", config.App.GrpcPort)
@@ -39,6 +40,7 @@ func GrpcServer(
 		manager_api.RegisterMovieTheaterServer(s, movieTheaterServer)
 		manager_api.RegisterCinemaRoomServiceServer(s, cinemaRoomServiceServer)
 		manager_api.RegisterTheaterSeatingServer(s, theaterSeatingServer)
+		manager_api.RegisterMovieServer(s, movieServer)
 
 		log.Printf("gRPC server running on %s", port)
 		if err := s.Serve(lis); err != nil {

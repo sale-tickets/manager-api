@@ -12,3 +12,9 @@ database:
   name: sale-tickets
 
 jwt-key: 1111-2222-3333-4444-5555-6666
+
+minio:
+  endpoint: 127.0.0.1:9000
+  access_key_id: admin
+  secret_access_key: 123456789aA@
+  use_ssl: false
