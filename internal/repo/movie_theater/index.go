@@ -1,7 +1,7 @@
 package movietheater_repo
 
 import (
-	"github.com/sale-tickets/manager-api/internal/model"
+	"github.com/sale-tickets/golang-common/model"
 	"github.com/sale-tickets/manager-api/internal/view"
 
 	"gorm.io/gorm"

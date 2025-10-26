@@ -2,7 +2,8 @@ package movie_repo
 
 import (
 	"github.com/godev-lib/golang/orm"
-	"github.com/sale-tickets/manager-api/internal/model"
+	"github.com/sale-tickets/golang-common/model"
+
 	"gorm.io/gorm"
 )
 

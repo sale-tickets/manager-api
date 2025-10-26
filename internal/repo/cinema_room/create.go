@@ -2,7 +2,7 @@ package cinemaroom_repo
 
 import (
 	"github.com/google/uuid"
-	"github.com/sale-tickets/manager-api/internal/model"
+	"github.com/sale-tickets/golang-common/model"
 	"github.com/sale-tickets/manager-api/internal/view"
 )
 

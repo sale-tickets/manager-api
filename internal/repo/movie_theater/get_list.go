@@ -3,8 +3,9 @@ package movietheater_repo
 import (
 	"fmt"
 
+	"github.com/sale-tickets/golang-common/model"
 	"github.com/sale-tickets/manager-api/internal/common/utils"
-	"github.com/sale-tickets/manager-api/internal/model"
+
 	"github.com/sale-tickets/manager-api/internal/view"
 )
 

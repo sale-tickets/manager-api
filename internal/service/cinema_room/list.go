@@ -2,7 +2,8 @@ package cinemaroom_service
 
 import (
 	manager_api "github.com/sale-tickets/golang-common/manager-api/proto"
-	"github.com/sale-tickets/manager-api/internal/model"
+	"github.com/sale-tickets/golang-common/model"
+
 	"github.com/sale-tickets/manager-api/internal/view"
 )
 

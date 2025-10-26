@@ -3,7 +3,7 @@ package cinemaroom_repo
 import (
 	"errors"
 
-	"github.com/sale-tickets/manager-api/internal/model"
+	"github.com/sale-tickets/golang-common/model"
 	"github.com/sale-tickets/manager-api/internal/view"
 )
 
