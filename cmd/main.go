@@ -2,14 +2,12 @@ package main
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/godev-lib/golang/config"
 	minio_custom "github.com/godev-lib/golang/minio"
 	"github.com/godev-lib/golang/psql"
 	"github.com/minio/minio-go/v7"
 	manager_api "github.com/sale-tickets/golang-common/manager-api/proto"
-	"github.com/sale-tickets/golang-common/model"
 	cinemaroom_controller "github.com/sale-tickets/manager-api/internal/handle/cinema_room"
 	health_controller "github.com/sale-tickets/manager-api/internal/handle/health"
 	movie_controller "github.com/sale-tickets/manager-api/internal/handle/movie"
@@ -112,17 +110,6 @@ func run() {
 		fx.Invoke(func(lc fx.Lifecycle, db *gorm.DB) {
 			lc.Append(fx.Hook{
 				OnStart: func(ctx context.Context) error {
-					err := db.AutoMigrate(
-						&model.CinemaRoom{},
-						&model.MovieTheater{},
-						&model.TheaterSeating{},
-						&model.Movie{},
-					)
-					if err != nil {
-						return err
-					}
-
-					fmt.Println("manager-api migrate db successfully!")
 					return nil
 				},
 				OnStop: func(ctx context.Context) error {

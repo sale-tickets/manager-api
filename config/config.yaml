@@ -3,7 +3,7 @@ app:
   host: 127.0.0.1
   grpc_port: 50000
   http_port: 8000
-  
+
 database:
   host: 10.43.238.190
   port: 5432
@@ -14,7 +14,7 @@ database:
 jwt-key: 1111-2222-3333-4444-5555-6666
 
 minio:
-  endpoint: 127.0.0.1:9000
+  endpoint: 172.17.8.248:30900
   access_key_id: admin
   secret_access_key: 123456789aA@
   use_ssl: false

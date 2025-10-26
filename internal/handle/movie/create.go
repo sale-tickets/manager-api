@@ -46,6 +46,8 @@ func (c *movieController) Create(ctx context.Context, req *manager_api.CreateMov
 			CategoryId:  req.Data.CategoryId,
 			Description: newMovie.Description,
 			Thumbnail:   newMovie.Thumbnail,
+			CreatedAt:   newMovie.CreatedAt.String(),
+			UpdatedAt:   newMovie.UpdatedAt.String(),
 		},
 	}
 	return result, nil
