@@ -8,6 +8,7 @@ import (
 	"github.com/godev-lib/golang/psql"
 	"github.com/minio/minio-go/v7"
 	manager_api "github.com/sale-tickets/golang-common/manager-api/proto"
+	"github.com/sale-tickets/golang-common/model"
 	cinemaroom_controller "github.com/sale-tickets/manager-api/internal/handle/cinema_room"
 	health_controller "github.com/sale-tickets/manager-api/internal/handle/health"
 	movie_controller "github.com/sale-tickets/manager-api/internal/handle/movie"
@@ -91,11 +92,11 @@ func run() {
 		fx.Provide(func() manager_api.HealthServer {
 			return health_controller.NewHandle()
 		}),
-		fx.Provide(func(service movietheater_service.MovietheaterService) manager_api.MovieTheaterServer {
-			return moviethreater_controller.NewHandle(service)
+		fx.Provide(func(movieTheaterService movietheater_service.MovietheaterService) manager_api.MovieTheaterServer {
+			return moviethreater_controller.NewHandle(movieTheaterService)
 		}),
-		fx.Provide(func(service cinemaroom_service.CinemaRoomService) manager_api.CinemaRoomServiceServer {
-			return cinemaroom_controller.NewHandle(service)
+		fx.Provide(func(service cinemaroom_service.CinemaRoomService, theaterSeatingService theaterseating_service.TheaterSeatingService) manager_api.CinemaRoomServiceServer {
+			return cinemaroom_controller.NewHandle(service, theaterSeatingService)
 		}),
 		fx.Provide(func(service theaterseating_service.TheaterSeatingService) manager_api.TheaterSeatingServer {
 			return theaterseating_controller.NewHandle(service)
@@ -110,6 +111,14 @@ func run() {
 		fx.Invoke(func(lc fx.Lifecycle, db *gorm.DB) {
 			lc.Append(fx.Hook{
 				OnStart: func(ctx context.Context) error {
+					db.AutoMigrate(
+						&model.Category{},
+						&model.CinemaRoom{},
+						&model.Movie{},
+						&model.MovieTheater{},
+						&model.TheaterSeating{},
+						&model.Ticket{},
+					)
 					return nil
 				},
 				OnStop: func(ctx context.Context) error {

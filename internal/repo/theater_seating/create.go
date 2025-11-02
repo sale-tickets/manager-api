@@ -24,6 +24,7 @@ func (r *theaterSeatingRepo) Create(req *view.CreateTheaterSeatingReq) ([]string
 			Name:         item.Name,
 			RowIndex:     item.RowIndex,
 			ColIndex:     item.ColIndex,
+			Code:         item.Code,
 		})
 		ids = append(ids, uuidBuf.String())
 	}
