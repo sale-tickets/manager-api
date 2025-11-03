@@ -8,15 +8,16 @@ import (
 	"github.com/godev-lib/golang/psql"
 	"github.com/minio/minio-go/v7"
 	manager_api "github.com/sale-tickets/golang-common/manager-api/proto"
-	"github.com/sale-tickets/golang-common/model"
 	cinemaroom_controller "github.com/sale-tickets/manager-api/internal/handle/cinema_room"
 	health_controller "github.com/sale-tickets/manager-api/internal/handle/health"
 	movie_controller "github.com/sale-tickets/manager-api/internal/handle/movie"
 	moviethreater_controller "github.com/sale-tickets/manager-api/internal/handle/movie_threater"
+	showtime_controller "github.com/sale-tickets/manager-api/internal/handle/showtime"
 	theaterseating_controller "github.com/sale-tickets/manager-api/internal/handle/theater_seating"
 	cinemaroom_repo "github.com/sale-tickets/manager-api/internal/repo/cinema_room"
 	movie_repo "github.com/sale-tickets/manager-api/internal/repo/movie"
 	movietheater_repo "github.com/sale-tickets/manager-api/internal/repo/movie_theater"
+	showtime_repo "github.com/sale-tickets/manager-api/internal/repo/showtime"
 	theaterseating_repo "github.com/sale-tickets/manager-api/internal/repo/theater_seating"
 	"github.com/sale-tickets/manager-api/internal/router"
 	cinemaroom_service "github.com/sale-tickets/manager-api/internal/service/cinema_room"
@@ -72,6 +73,9 @@ func run() {
 		fx.Provide(func(db *gorm.DB) *movie_repo.MovieRepo {
 			return movie_repo.NewMovieRepo(db)
 		}),
+		fx.Provide(func(db *gorm.DB) *showtime_repo.ShowtimeRepo {
+			return showtime_repo.NewShowtimeRepo(db)
+		}),
 	))
 
 	componentInts = append(componentInts, fx.Module(
@@ -104,6 +108,9 @@ func run() {
 		fx.Provide(func(repo *movie_repo.MovieRepo) manager_api.MovieServer {
 			return movie_controller.NewHandle(repo)
 		}),
+		fx.Provide(func(repo *showtime_repo.ShowtimeRepo) manager_api.ShowtimeServer {
+			return showtime_controller.NewHandle(repo)
+		}),
 	))
 
 	componentInts = append(componentInts, fx.Module(
@@ -111,14 +118,15 @@ func run() {
 		fx.Invoke(func(lc fx.Lifecycle, db *gorm.DB) {
 			lc.Append(fx.Hook{
 				OnStart: func(ctx context.Context) error {
-					db.AutoMigrate(
-						&model.Category{},
-						&model.CinemaRoom{},
-						&model.Movie{},
-						&model.MovieTheater{},
-						&model.TheaterSeating{},
-						&model.Ticket{},
-					)
+					// db.AutoMigrate(
+					// 	&model.Category{},
+					// 	&model.CinemaRoom{},
+					// 	&model.Movie{},
+					// 	&model.MovieTheater{},
+					// 	&model.TheaterSeating{},
+					// 	&model.Ticket{},
+					// 	&model.Showtime{},
+					// )
 					return nil
 				},
 				OnStop: func(ctx context.Context) error {
@@ -133,6 +141,7 @@ func run() {
 			cinemaRoomServiceServer manager_api.CinemaRoomServiceServer,
 			theaterSeatingServer manager_api.TheaterSeatingServer,
 			movieServer manager_api.MovieServer,
+			showtimeServer manager_api.ShowtimeServer,
 		) {
 			router.GrpcServer(
 				config,
@@ -141,6 +150,7 @@ func run() {
 				cinemaRoomServiceServer,
 				theaterSeatingServer,
 				movieServer,
+				showtimeServer,
 			)
 		}),
 		fx.Invoke(func(config *config.Config) {

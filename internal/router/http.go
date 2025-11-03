@@ -36,6 +36,7 @@ func HttpServer(config *config.Config) {
 		manager_api.RegisterCinemaRoomServiceHandlerFromEndpoint(ctx, mux, grpcAddr, opts)
 		manager_api.RegisterTheaterSeatingHandlerFromEndpoint(ctx, mux, grpcAddr, opts)
 		manager_api.RegisterMovieHandlerFromEndpoint(ctx, mux, grpcAddr, opts)
+		manager_api.RegisterShowtimeHandlerFromEndpoint(ctx, mux, grpcAddr, opts)
 
 		httpAddr := fmt.Sprintf(
 			":%s",
