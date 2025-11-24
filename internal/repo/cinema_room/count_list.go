@@ -21,7 +21,7 @@ func (r *cinemaRoomRepo) CountList(req *view.ListCinemaRoomReq) (int32, error) {
 				AND mt.deleted_at IS NULL
 		`,
 		utils.MergeConditionAND(
-			utils.AddLikeClause("cr.code"),
+			utils.AddLikeClause("cr.movie_theater_id"),
 		),
 	)
 
